@@ -60,7 +60,7 @@ elif [ "$release" -eq 10 ] || [ "$release" -eq 11 ]; then
         apache2-suexec-pristine libapache2-mod-fcgid libapache2-mod-php$fpm_v
         php$fpm_v php$fpm_v-common php$fpm_v-cgi php$fpm_v-mysql php$fpm_v-curl
         php$fpm_v-pgsql php$fpm_v-imagick php$fpm_v-imap php$fpm_v-ldap
-        php$fpm_v-apcu awstats php$fpm_v-zip php$fpm_v-bz2 php$fpm_v-cli
+        php$fpm_v-apcu php$fpm_v-zip php$fpm_v-bz2 php$fpm_v-cli
         php$fpm_v-gd php$fpm_v-intl php$fpm_v-mbstring
         php$fpm_v-opcache php$fpm_v-pspell php$fpm_v-readline php$fpm_v-xml
         awstats vsftpd proftpd-basic bind9 exim4 exim4-daemon-heavy
@@ -1299,12 +1299,6 @@ fi
 echo "[ * ] Enable SFTP jail..."
 $HESTIA/bin/v-add-sys-sftp-jail > /dev/null 2>&1
 check_result $? "can't enable sftp jail"
-
-# Switch to sha512 for deb11.
-if [ "$release" -eq 11 ]; then
-    # Switching to sha512
-    sed -i "s/ yescrypt/ sha512/g" /etc/pam.d/common-password
-fi
 
 # Adding Hestia admin account
 $HESTIA/bin/v-add-user admin $vpass $email "system" "System Administrator"
