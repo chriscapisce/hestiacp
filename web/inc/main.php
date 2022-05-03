@@ -21,6 +21,7 @@ define('DEFAULT_PHP_VERSION', 'php-' . exec('php -r "echo substr(phpversion(),0,
 // Load Hestia Config directly
 load_hestia_config();
 require_once(dirname(__FILE__) . '/prevent_csrf.php');
+require_once(dirname(__FILE__) . '/helpers.php');
 
 function destroy_sessions()
 {
@@ -63,7 +64,7 @@ if (!isset($_SESSION['user_combined_ip'])) {
 }
 
 // Checking user to use session from the same IP he has been logged in
-if ($_SESSION['user_combined_ip'] != $user_combined_ip && $_SERVER['REMOTE_ADDR'] != '127.0.0.1') {
+if ($_SESSION['user_combined_ip'] != $user_combined_ip) {
     $v_user = escapeshellarg($_SESSION['user']);
     $v_session_id = escapeshellarg($_SESSION['token']);
     exec(HESTIA_CMD . 'v-log-user-logout ' . $v_user . ' ' . $v_session_id, $output, $return_var);
@@ -125,10 +126,6 @@ if (isset($_SESSION['user'])) {
 if (isset($_SESSION['look']) && $_SESSION['look']  != '' && ($_SESSION['userContext'] === 'admin')) {
     $user = escapeshellarg($_SESSION['look']);
     $user_plain = htmlentities($_SESSION['look']);
-}
-
-if (empty($_SESSION['look'])) {
-    $_SESSION['look'] = '';
 }
 
 require_once(dirname(__FILE__) . '/i18n.php');
