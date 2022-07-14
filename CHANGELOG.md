@@ -1,6 +1,76 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.6.4] - Service release 
+
+Still in development
+
+## [1.6.3] - Service release 
+
+### Features
+
+- Add additional support for bcrypt for mail passwords (#2752 @divinity76)
+
+### Enhancements 
+
+- Simplify md5crypt on reset form email (#2751 @divinity76)
+- Use secure RNG to generate passwords (#2726)
+- Add twig support filemanger (#2714, @anvme)
+
+### Bugfixes
+
+- Fixed an issue with restart Apache2 and Nginx after v-update-letsencrypt (#2748, #2563, #2744, #2677)
+- Prevent transversing path in Quick installer apps (#2742)
+- Avoid out of memory serving large logfiles (#2741, #2736,  @divinity76
+- Improve passwords loading in password_valid (#2739)
+- Use secure RNG to generate passwords (#2726)
+- Utilise entire alphabet for random string (#2735 @Shadowfied)
+- Don't use hosts_try_fastopen in Exim for Gmail / Google hostnames
+- Add check if Sieve is already installed (#2719  #manuelserol)
+- Allow PHP templates to be selected in Quick installer apps (#2713, #2711, #2690)
+- Small changes to translation strings (#2700 @V4M0N0S)
+- Rate limit in email address blank in UI (saved correct in limits) (#2710, #2707)
+- Fixed a bug in Settings sites where always websites got rebuild on save (#2705, #2710)
+- Fixed a bug in Weblog where the session got incorrectly reset as admin user (#2710)
+- Prevent v-add-web-php to be used for non fpm installs (#2753)
+- Update translations (#2750)
+- Chmod o+x .ssh folder when creating file manager ssh key (#2755)
+
+### Dependencies
+
+- Update hestia-php to 8.1.8 
+    - Update disable_functions list php.ini for hestia-php (#2746, #2741)
+
+## [1.6.2] - Service release
+
+- Fixed an issue with rate limits in Exim4 and make it more bullet proof (#2703)
+- Fixed an issue with system-filter not propperly loaded in Exim4 for Exim 4.94 and Ugrades from 1.5.x 
+
+## [1.6.1] - Service release
+
+### Bugfixes
+
+- Fixed an issue with rate limit and alias domains (#2676, #2666)
+- Fixed an issue with reject spam option (#2687, #2864)
+- Fixed an issue in the installer when sieve is enabled (#2675, #2668)
+- Fixed an issue with File manager in development mode (#2682 #2644) 
+- Fixed multiple small in templates (#2659 @ledoktre, #2680, #2671, #2679, #2670, #2681, #2699)
+- Fixed add second check if DNS resolving fails (#2678)
+- Fixed an issue where v-change-sys-hostname does not update host file (#2688 #2683)
+- Fixed an issue with IDN conversions not working on new server installs (#2692 @wojsmol)
+
+### Enhancements
+
+- Improve restart behaviour php-fpm
+- Improve updating process to make it faster. 
+- Removed outdated / never used test scripts (#2685)
+
+### Dependencies
+
+- Update hestia-nginx to 1.23.0
+- Update PHPmailer to 6.6.3
+- Update Roundcube to 1.5.3
+
 ## [1.6.0] - Major Release (Feature / Quality Update)
 
 ### Important Notes

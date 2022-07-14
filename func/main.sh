@@ -414,8 +414,10 @@ is_object_value_exist() {
 # Check if password is transmitted via file
 is_password_valid() {
     if [[ "$password" =~ ^/tmp/ ]]; then
-        if [ -f "$password" ]; then
-            password="$(head -n1 $password)"
+        if ! [[ "$password" == *../* ]]; then
+            if [ -f "$password" ]; then
+                password="$(head -n1 $password)"
+            fi
         fi
     fi
 }
@@ -423,8 +425,10 @@ is_password_valid() {
 # Check if hash is transmitted via file
 is_hash_valid() {
     if [[ "$hash" =~ ^/tmp/ ]]; then
-        if [ -f "$hash" ]; then
-            hash="$(head -n1 $hash)"
+        if ! [[ "$hash" == *../* ]]; then
+            if [ -f "$hash" ]; then
+                hash="$(head -n1 $hash)"
+            fi
         fi
     fi
 }
@@ -1186,8 +1190,8 @@ is_format_valid() {
                 proxy_ext)      is_extention_format_valid "$arg" ;;
                 quota)          is_int_format_valid "$arg" 'quota' ;;
                 rate)           is_int_format_valid "$arg" 'rate' ;;
-
                 record)         is_common_format_valid "$arg" 'record';;
+                reject)       is_boolean_format_valid "$arg" 'reject' ;;
                 restart)        is_restart_format_valid "$arg" 'restart' ;;
                 role)           is_role_valid "$arg" 'role' ;;
                 rtype)          is_dns_type_format_valid "$arg" ;;
