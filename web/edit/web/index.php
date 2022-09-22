@@ -63,8 +63,8 @@ if (empty($v_letsencrypt)) {
 }
 $v_ssl_home = $data[$v_domain]['SSL_HOME'];
 $v_backend_template = $data[$v_domain]['BACKEND'];
-$v_nginx_cache = $data[$v_domain]['FASTCGI_CACHE'];
-$v_nginx_cache_duration = $data[$v_domain]['FASTCGI_DURATION'];
+$v_nginx_cache = $data[$v_domain]['FASTCGI_CACHE'] ?? '';
+$v_nginx_cache_duration = $data[$v_domain]['FASTCGI_DURATION'] ?? '';
 $v_nginx_cache_check = '';
 if (empty($v_nginx_cache_duration)) {
     $v_nginx_cache_duration = '2m';
@@ -403,19 +403,6 @@ if (!empty($_POST['save'])) {
             $v_stats = quoteshellarg($_POST['v_stats']);
             exec(HESTIA_CMD."v-change-web-domain-stats ".$user." ".quoteshellarg($v_domain)." ".$v_stats, $output, $return_var);
             check_return_code($return_var, $output);
-            unset($output);
-        }
-    }
-
-    // Change document root for ssl domain
-    if (($v_ssl == 'yes') && (!empty($_POST['v_ssl'])) && (empty($_SESSION['error_msg']))) {
-        if ($v_ssl_home != $_POST['v_ssl_home']) {
-            $v_ssl_home = quoteshellarg($_POST['v_ssl_home']);
-            exec(HESTIA_CMD."v-change-web-domain-sslhome ".$user." ".quoteshellarg($v_domain)." ".$v_ssl_home." 'no'", $output, $return_var);
-            check_return_code($return_var, $output);
-            $v_ssl_home = $_POST['v_ssl_home'];
-            $restart_web = 'yes';
-            $restart_proxy = 'yes';
             unset($output);
         }
     }
@@ -787,10 +774,10 @@ if (!empty($_POST['save'])) {
                     if ((!empty($v_ftp_user_data['v_ftp_email'])) && (empty($_SESSION['error_msg']))) {
                         $to = $v_ftp_user_data['v_ftp_email'];
                         $subject = _("FTP login credentials");
-                        $hostname = exec('hostname');
+                        $hostname = get_hostname();
                         $from = "noreply@".$hostname;
                         $from_name = _('Hestia Control Panel');
-                        $mailtext = sprintf(_('FTP_ACCOUNT_READY'), quoteshellarg($_GET['domain']), $user, $v_ftp_username, $v_ftp_user_data['v_ftp_password']);
+                        $mailtext = sprintf(_('FTP_ACCOUNT_READY'), $v_domain, $user_plain, $v_ftp_username, $v_ftp_user_data['v_ftp_password']);
                         send_email($to, $subject, $mailtext, $from, $from_name);
                         unset($v_ftp_email);
                     }
@@ -864,7 +851,7 @@ if (!empty($_POST['save'])) {
 
                     $to = $v_ftp_user_data['v_ftp_email'];
                     $subject = _("FTP login credentials");
-                    $hostname = exec('hostname');
+                    $hostname = get_hostname();
                     $from = "noreply@".$hostname;
                     $from_name = _('Hestia Control Panel');
                     $mailtext =  sprintf(_('FTP_ACCOUNT_READY'), quoteshellarg($_GET['domain']), $user, $v_ftp_username_for_emailing, $v_ftp_user_data['v_ftp_password']);

@@ -480,10 +480,12 @@ add_object_key() {
 search_objects() {
     OLD_IFS="$IFS"
     IFS=$'\n'
-    for line in $(grep $2=\'$3\' $USER_DATA/$1.conf); do
-        parse_object_kv_list "$line"
-        eval echo \$$4
-    done
+    if [ -f $USER_DATA/$1.conf ]; then
+      for line in $(grep $2=\'$3\' $USER_DATA/$1.conf); do
+          parse_object_kv_list "$line"
+          eval echo \$$4
+      done
+    fi
     IFS="$OLD_IFS"
 }
 
@@ -1069,7 +1071,7 @@ is_cron_format_valid() {
 
 # Name validator
 is_name_format_valid() {
-    if ! [[ "$1" =~ ^[[:alnum:]][-|\ |\.|_[:alnum:]]{0,28}[[:alnum:]]$ ]]; then
+    if ! [[ "$1" =~ ^[-|\ |\.|_[:alnum:]]{0,50}$ ]]; then
         check_result "$E_INVALID" "invalid $2 format :: $1"
     fi
 }
@@ -1502,8 +1504,14 @@ multiphp_default_version() {
 }
 
 is_hestia_package(){
-    if [ -z "$(echo $1 | grep -w $2)" ]; then
-        check_result "$E_INVALID" "$2 package is not controlled by hestiacp"
+    check=false;
+    for package in $1; do 
+      if [ $package == "$2" ]; then 
+        check="true";
+      fi
+    done
+    if [ "$check" != "true" ]; then
+      check_result $E_INVALID "$2 package is not controlled by hestiacp"
     fi
 }
 
