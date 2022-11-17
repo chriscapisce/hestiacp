@@ -3,7 +3,7 @@
 # options: HOST PORT USER PASSWORD [TYPE] [DNS_USER]
 #
 # example: v-add-remote-dns-host slave.your_host.com 8083 admin your_passw0rd
-# 
+#
 # example: v-add-remote-dns-host slave.your_host.com 8083 api_key ''
 #
 # This function adds remote dns server to the dns cluster.
@@ -85,14 +85,14 @@ else
     str="HOST='$host' PORT='$port' USER='$user' PASSWORD='$password'"
     str="$str DNS_USER='$dns_user' TYPE='$type' SUSPENDED='no'"
     str="$str TIME='$time' DATE='$date'"
-fi    
+fi
 
 # Adding host to dns-cluster.conf
 echo "$str" >> $HESTIA/conf/dns-cluster.conf
 chmod 660 $HESTIA/conf/dns-cluster.conf
 
 # Enabling DNS_CLUSTER
-if [ -z "$(grep DNS_CLUSTER $HESTIA/conf/hestia.conf)" ]; then
+if [ -z "$(grep DNS_CLUSTER= $HESTIA/conf/hestia.conf)" ]; then
     sed -i "s/^STATS_/DNS_CLUSTER='yes'\nSTATS_/g" $HESTIA/conf/hestia.conf
 else
     sed -i "s/DNS_CLUSTER=.*/DNS_CLUSTER='yes'/g" $HESTIA/conf/hestia.conf
@@ -102,8 +102,15 @@ fi
 cluster_cmd v-add-cron-restart-job
 check_result $? "$HOST connection failed" "$E_CONNECT"
 
+# Loop trough domains to generate new serial
+for dns_user in $($BIN/v-list-sys-users plain); do
+    for dns_domain in $($BIN/v-list-dns-domains $dns_user plain | cut -f1); do
+        $BIN/v-rebuild-dns-domain $dns_user $dns_domain "no" "yes"
+    done
+done
+
 # Syncing all domains
-$BIN/v-sync-dns-cluster "$host"
+$BIN/v-sync-dns-cluster
 check_result $? "$HOST sync failed" "$E_CONNECT"
 
 #----------------------------------------------------------#

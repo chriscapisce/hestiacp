@@ -1840,9 +1840,9 @@ if [ "$sieve" = 'yes' ]; then
     # Permission changes
     chown -R dovecot:mail /var/log/dovecot.log
     chmod 660 /var/log/dovecot.log
-    
+
     if [ -d "/var/lib/roundcube" ]; then
-        # Modify Roundcube config 
+        # Modify Roundcube config
         mkdir -p $RC_CONFIG_DIR/plugins/managesieve
         cp -f $HESTIA_COMMON_DIR/roundcube/plugins/config_managesieve.inc.php $RC_CONFIG_DIR/plugins/managesieve/config.inc.php
         ln -s $RC_CONFIG_DIR/plugins/managesieve/config.inc.php $RC_INSTALL_DIR/plugins/managesieve/config.inc.php
@@ -2042,6 +2042,10 @@ write_config_value "SERVER_SMTP_PASSWD" ""
 write_config_value "SERVER_SMTP_ADDR" ""
 write_config_value "POLICY_CSRF_STRICTNESS" "1"
 
+# Add /usr/local/hestia/bin/ to path variable
+echo 'if [ "${PATH#*/usr/local/hestia/bin*}" = "$PATH" ]; then
+    . /etc/profile.d/hestia.sh
+fi'  >> /root/.bashrc
 
 #----------------------------------------------------------#
 #                   Hestia Access Info                     #

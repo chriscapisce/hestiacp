@@ -24,10 +24,10 @@ App.Actions.PACKAGE.disable_unlimited = function(elm, source_elm) {
     $(source_elm).css('opacity', '0.5');
 }
 
-// 
+//
 App.Actions.PACKAGE.toggle_unlimited_feature = function(evt) {
     var elm = $(evt.target);
-    var ref = elm.prev('.vst-input');
+    var ref = elm.prev('.form-control');
     if (!$(ref).data('checked')) {
         App.Actions.PACKAGE.enable_unlimited(ref, elm);
     }
@@ -42,7 +42,7 @@ App.Listeners.PACKAGE.checkbox_unlimited_feature = function() {
 
 App.Listeners.PACKAGE.init = function() {
     $('.unlim-trigger').each(function(i, elm) {
-        var ref = $(elm).prev('.vst-input');
+        var ref = $(elm).prev('.form-control');
         if (App.Helpers.isUnlimitedValue($(ref).val())) {
             App.Actions.PACKAGE.enable_unlimited(ref, elm);
         }
@@ -78,26 +78,26 @@ $('form[name="v_edit_package"]').on('submit', function(evt) {
 
 
 $(document).ready(function(){
-    $('.add-ns-button').click(function(){
+    $('.js-add-ns-button').click(function(){
         var n = $('input[name^=v_ns]').length;
         if(n < 8){
-            var t = $($('input[name=v_ns1]').parents('tr')[0]).clone(true, true);
+            var t = $($('input[name=v_ns1]').parents('div')[0]).clone(true, true);
             t.find('input').attr({value:'', name:'v_ns'+(n+1)});
             t.find('span').show();
-            $('tr.add-ns').before(t);
+            $('.js-add-ns').before(t);
         }
         if( n == 7 ) {
-            $('.add-ns').hide();
+            $('.js-add-ns').addClass('u-hidden');
         }
     });
 
-    $('.remove-ns').click(function(){
-        $(this).parents('tr')[0].remove();
+    $('.js-remove-ns').click(function(){
+        $(this).parents('div')[0].remove();
         $('input[name^=v_ns]').each(function(i, ns){
             $(ns).attr({name: 'v_ns'+(i+1)});
             i < 2 ? $(ns).parent().find('span').hide() : $(ns).parent().find('span').show();
         });
-        $('.add-ns').show();
+        $('.js-add-ns').removeClass('u-hidden');
     });
 
     $('input[name^=v_ns]').each(function(i, ns){

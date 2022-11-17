@@ -24,10 +24,10 @@ App.Actions.MAIL_ACC.disable_unlimited = function(elm, source_elm) {
     $(source_elm).css('opacity', '0.5');
 }
 
-// 
+//
 App.Actions.MAIL_ACC.toggle_unlimited_feature = function(evt) {
     var elm = $(evt.target);
-    var ref = elm.prev('.vst-input');
+    var ref = elm.prev('.form-control');
     if (!$(ref).data('checked')) {
         App.Actions.MAIL_ACC.enable_unlimited(ref, elm);
     }
@@ -42,7 +42,7 @@ App.Listeners.MAIL_ACC.checkbox_unlimited_feature = function() {
 
 App.Listeners.MAIL_ACC.init = function() {
     $('.unlim-trigger').each(function(i, elm) {
-        var ref = $(elm).prev('.vst-input');
+        var ref = $(elm).prev('.form-control');
         if (App.Helpers.isUnlimitedValue($(ref).val())) {
             App.Actions.MAIL_ACC.enable_unlimited(ref, elm);
         }
@@ -53,19 +53,31 @@ App.Listeners.MAIL_ACC.init = function() {
     });
 }
 
-App.Actions.MAIL_ACC.update_v_password = function (){
+App.Helpers.isUnlimitedValue = function(value) {
+  var value = value.trim();
+  if (value == App.Constants.UNLIM_VALUE || value == App.Constants.UNLIM_TRANSLATED_VALUE) {
+      return true;
+  }
+
+  return false;
+}
+
+App.Listeners.MAIL_ACC.init();
+App.Listeners.MAIL_ACC.checkbox_unlimited_feature();
+
+App.Actions.MAIL_ACC.update_password_meter = function (){
     var password = $('input[name="v_password"]').val();
     var min_small = new RegExp(/^(?=.*[a-z]).+$/);
     var min_cap = new RegExp(/^(?=.*[A-Z]).+$/);
-    var min_num = new RegExp(/^(?=.*\d).+$/); 
+    var min_num = new RegExp(/^(?=.*\d).+$/);
     var min_length = 8;
     var score = 0;
-    
+
     if(password.length >= min_length) { score = score + 1; }
     if(min_small.test(password)) { score = score + 1;}
     if(min_cap.test(password)) { score = score + 1;}
     if(min_num.test(password)) { score = score+ 1; }
-    $('#meter').val(score);   
+    $('.password-meter').val(score);
 }
 
 App.Listeners.MAIL_ACC.keypress_v_password = function() {
@@ -74,44 +86,44 @@ App.Listeners.MAIL_ACC.keypress_v_password = function() {
         clearTimeout(window.frp_usr_tmt);
         window.frp_usr_tmt = setTimeout(function() {
             var elm = $(evt.target);
-            App.Actions.MAIL_ACC.update_v_password(elm, $(elm).val());
+            App.Actions.MAIL_ACC.update_password_meter(elm, $(elm).val());
         }, 100);
     });
 }
 
 $('#v_blackhole').on('click', function(evt){
-       if($('#v_blackhole').is(':checked')){
-           $('#v_fwd').prop('disabled', true);
-           $('#v_fwd_for').prop('checked', true);
-           $('#id_fwd_for').hide();
-       }else{
-           $('#v_fwd').prop('disabled', false);
-           $('#id_fwd_for').show();       
-       }
-    });
+    if($('#v_blackhole').is(':checked')){
+        $('#v_fwd').prop('disabled', true);
+        $('#v_fwd_for').prop('checked', true);
+        $('#id_fwd_for').hide();
+    }else{
+        $('#v_fwd').prop('disabled', false);
+        $('#id_fwd_for').show();
+    }
+});
 
 App.Listeners.MAIL_ACC.keypress_v_password();
 
 
-randomString = function (min_length = 16) {
-  var randomstring = randomString2(min_length);
-  $("input[name=v_password]").val(randomstring);
-  if ($("input[name=v_password]").attr("type") == "text")
-    $("#v_password").text(randomstring);
-  else 
-    $("#v_password").text(Array(randomstring.length + 1).join("*"));
-  App.Actions.MAIL_ACC.update_v_password();
-  generate_mail_credentials();
+applyRandomString = function (min_length = 16) {
+    var randomString = randomString2(min_length);
+    $("input[name=v_password]").val(randomString);
+    if ($("input[name=v_password]").attr("type") == "text")
+        $(".js-password-output").text(randomString);
+    else
+        $(".js-password-output").text(Array(randomString.length + 1).join("*"));
+    App.Actions.MAIL_ACC.update_password_meter();
+    generate_mail_credentials();
 };
 
 generate_mail_credentials = function() {
     var div = $('.mail-infoblock').clone();
     div.find('#mail_configuration').remove();
-    var pass=div.find('#v_password').text();
-    if (pass=="") div.find('#v_password').text(' ');
+    var pass=div.find('.js-password-output').text();
+    if (pass=="") div.find('.js-password-output').text(' ');
     var output = div.text();
     output=output.replace(/(?:\r\n|\r|\n|\t)/g, "|");
-    output=output.replace(/  /g, "");
+    output=output.replace(/ {2}/g, "");
     output=output.replace(/\|\|/g, "|");
     output=output.replace(/\|\|/g, "|");
     output=output.replace(/\|\|/g, "|");
@@ -120,32 +132,32 @@ generate_mail_credentials = function() {
     output=output.replace(/ $/, "");
     output=output.replace(/:\|/g, ": ");
     output=output.replace(/\|/g, "\n");
-    $('#v_credentials').val(output);
+    $('.js-hidden-credentials').val(output);
 }
 
 $(document).ready(function() {
-    $('#v_account').text($('input[name=v_account]').val());
-    $('#v_password').text($('input[name=v_password]').val());
+    $('.js-account-output').text($('input[name=v_account]').val());
+    $('.js-password-output').text($('input[name=v_password]').val());
     generate_mail_credentials();
 
     $('input[name=v_account]').change(function(){
-        $('#v_account').text($(this).val());
+        $('.js-account-output').text($(this).val());
         generate_mail_credentials();
     });
-  
+
     $('input[name=v_password]').change(function(){
         if($('input[name=v_password]').attr('type') == 'text')
-            $('#v_password').text($(this).val());
+            $('.js-password-output').text($(this).val());
         else
-            $('#v_password').text(Array($(this).val().length+1).join('*'));
+            $('.js-password-output').text(Array($(this).val().length+1).join('*'));
         generate_mail_credentials();
     });
 
     $('.toggle-psw-visibility-icon').click(function(){
         if($('input[name=v_password]').attr('type') == 'text')
-            $('#v_password').text($('input[name=v_password]').val());
+            $('.js-password-output').text($('input[name=v_password]').val());
         else
-            $('#v_password').text(Array($('input[name=v_password]').val().length+1).join('*'));
+            $('.js-password-output').text(Array($('input[name=v_password]').val().length+1).join('*'));
         generate_mail_credentials();
     });
 

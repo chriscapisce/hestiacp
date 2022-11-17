@@ -64,7 +64,7 @@ function syshealth_update_dns_config_format() {
     # DNS DOMAINS
     # Create array of known keys in configuration file
     system="dns"
-    known_keys="DOMAIN IP TPL TTL EXP SOA SERIAL SRC RECORDS SUSPENDED TIME DATE"
+    known_keys="DOMAIN IP TPL TTL EXP SOA SERIAL SRC RECORDS DNSSEC KEY SLAVE MASTER SUSPENDED TIME DATE"
     write_kv_config_file
     unset system
     unset known_keys
@@ -164,6 +164,19 @@ function syshealth_repair_mail_config() {
     for key in $known_keys; do
         if [ -z "${!key}" ]; then
             add_object_key 'mail' 'DOMAIN' "$domain" "$key" "$prev"
+        fi
+        prev=$key
+    done
+}
+
+function syshealth_repair_dns_config() {
+    system="dns"
+    sanitize_config_file "$system"
+    get_domain_values 'dns'
+    prev="DOMAIN"
+    for key in $known_keys; do
+        if [ -z "${!key}" ]; then
+            add_object_key 'dns' 'DOMAIN' "$domain" "$key" "$prev"
         fi
         prev=$key
     done
@@ -463,7 +476,11 @@ function syshealth_repair_system_config() {
         echo "[ ! ] Adding missing variable to hestia.conf: POLICY_CSRF_STRICTNESS ('')"
         $BIN/v-change-sys-config-value "POLICY_CSRF_STRICTNESS" "1"
     fi
-    
+    if [[ -z $(check_key_exists 'DNS_CLUSTER_SYSTEM') ]]; then
+        echo "[ ! ] Adding missing variable to hestia.conf: DNS_CLUSTER_SYSTEM ('')"
+        $BIN/v-change-sys-config-value "DNS_CLUSTER_SYSTEM" "hestia"
+    fi
+
     touch $HESTIA/conf/hestia.conf.new
     while IFS='= ' read -r lhs rhs
       do
@@ -472,7 +489,7 @@ function syshealth_repair_system_config() {
               rhs="${rhs%%*( )}"   # Del trailing spaces
               rhs="${rhs%\'*}"     # Del opening string quotes
               rhs="${rhs#\'*}"     # Del closing string quotes
-              
+
           fi
           check_ckey=$(grep "^$lhs='" "$HESTIA/conf/hestia.conf.new")
             if [ -z "$check_ckey" ]; then
@@ -481,14 +498,14 @@ function syshealth_repair_system_config() {
                 sed -i "s|^$lhs=.*|$lhs='$rhs'|g" "$HESTIA/conf/hestia.conf.new"
             fi
       done < $HESTIA/conf/hestia.conf
-      
+
       cmp --silent $HESTIA/conf/hestia.conf $HESTIA/conf/hestia.conf.new
-      if [ $? -ne 0 ]; then 
+      if [ $? -ne 0 ]; then
         echo "[ ! ] Duplicated keys found repair config"
         rm  $HESTIA/conf/hestia.conf
         cp $HESTIA/conf/hestia.conf.new $HESTIA/conf/hestia.conf
-        rm $HESTIA/conf/hestia.conf.new 
-      fi 
+        rm $HESTIA/conf/hestia.conf.new
+      fi
 }
 
 # Repair System Cron Jobs

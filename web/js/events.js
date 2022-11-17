@@ -75,7 +75,7 @@ VE.core.dispatch = function(evt, elm, event_type) {
 VE.callbacks.click.do_suspend = function(evt, elm) {
      var ref = elm.hasClass('actions-panel') ? elm : elm.parents('.actions-panel');
      var url = $('input[name="suspend_url"]', ref).val();
-     var dialog_elm = ref.find('.confirmation-text-suspention');
+     var dialog_elm = ref.find('.js-confirm-dialog-suspend');
      VE.helpers.createConfirmationDialog(dialog_elm, $(elm).parent().attr('title'), url);
 }
 
@@ -85,7 +85,7 @@ VE.callbacks.click.do_suspend = function(evt, elm) {
 VE.callbacks.click.do_unsuspend = function(evt, elm) {
      var ref = elm.hasClass('actions-panel') ? elm : elm.parents('.actions-panel');
      var url = $('input[name="unsuspend_url"]', ref).val();
-     var dialog_elm = ref.find('.confirmation-text-suspention');
+     var dialog_elm = ref.find('.js-confirm-dialog-suspend');
      VE.helpers.createConfirmationDialog(dialog_elm, $(elm).parent().attr('title'), url);
 }
 
@@ -95,21 +95,21 @@ VE.callbacks.click.do_unsuspend = function(evt, elm) {
 VE.callbacks.click.do_delete = function(evt, elm) {
      var ref = elm.hasClass('actions-panel') ? elm : elm.parents('.actions-panel');
      var url = $('input[name="delete_url"]', ref).val();
-     var dialog_elm = ref.find('.confirmation-text-delete');
+     var dialog_elm = ref.find('.js-confirm-dialog-delete');
      VE.helpers.createConfirmationDialog(dialog_elm, $(elm).parent().attr('title'), url);
 }
 
 VE.callbacks.click.do_servicerestart = function(evt, elm) {
     var ref = elm.hasClass('actions-panel') ? elm : elm.parents('.actions-panel');
     var url = $('input[name="servicerestart_url"]', ref).val();
-    var dialog_elm = ref.find('.confirmation-text-servicerestart');
+    var dialog_elm = ref.find('.js-confirm-dialog-servicerestart');
     VE.helpers.createConfirmationDialog(dialog_elm, $(elm).parent().attr('title'), url);
 }
 
 VE.callbacks.click.do_servicestop = function(evt, elm) {
     var ref = elm.hasClass('actions-panel') ? elm : elm.parents('.actions-panel');
     var url = $('input[name="servicestop_url"]', ref).val();
-    var dialog_elm = ref.find('.confirmation-text-servicestop');
+    var dialog_elm = ref.find('.js-confirm-dialog-servicestop');
     VE.helpers.createConfirmationDialog(dialog_elm, $(elm).parent().attr('title'), url);
 }
 
@@ -141,13 +141,9 @@ VE.helpers.createConfirmationDialog = function(elm, dialog_title, confirmed_loca
             }
         },
         create:function () {
-            $(this).closest(".ui-dialog")
-                .find(".ui-button:first")
-                .addClass("submit");
-            $(this).closest(".ui-dialog")
-                .find(".ui-button")
-                .eq(1) // the first button
-                .addClass("cancel");
+            var buttonGroup = $(this).closest(".ui-dialog").find('.ui-dialog-buttonset');
+            buttonGroup.find('button:first').addClass('button submit')
+            buttonGroup.find('button:last').addClass('button button-secondary cancel');
         }
     }
 
@@ -166,7 +162,7 @@ VE.helpers.warn = function(msg) {
 }
 
 VE.helpers.extendPasswordFields = function() {
-    var references = ['.password'];
+    var references = ['.js-password-input'];
 
     $(document).ready(function() {
         $(references).each(function(i, ref) {
@@ -184,7 +180,7 @@ VE.helpers.initAdditionalPasswordFieldElements = function(ref) {
     $(ref).prop('autocomplete', 'off');
 
     var enabled_html = enabled ? '' : 'show-passwords-enabled-action';
-    var html = '<span class="hide-password"><i class="toggle-psw-visibility-icon fas fa-eye-slash ' + enabled_html + '" onClick="VE.helpers.toggleHiddenPasswordText(\'' + ref + '\', this)"></i></span>';
+    var html = '<span class="toggle-password"><i class="toggle-psw-visibility-icon fas fa-eye-slash ' + enabled_html + '" onclick="VE.helpers.toggleHiddenPasswordText(\'' + ref + '\', this)"></i></span>';
     $(ref).after(html);
 }
 
@@ -212,7 +208,7 @@ VE.helpers.toggleHiddenPasswordText = function(ref, triggering_elm) {
 var reloadTimer = 150;
 var reloadFunction = '';
 
-$(document).ready(startTime);
+//$(document).ready(startTime);
 function startTime(){
     if ($(".spinner")[0]){
     reloadFunction = setInterval(updateInterval, 100);
