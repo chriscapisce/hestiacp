@@ -1,43 +1,109 @@
-// Default max of 3 lines are drawn for memory. Colors need to be update to work better
-colors=['rgba(255,52,120,0.5)','rgba(255,52,0,0.5)','rgba(255,255,120,0.5)'];
-// Other markups are working see https://www.chartjs.org/docs/latest/
+document.addEventListener('DOMContentLoaded', main);
 
-//todo make charts reponsive
-$(document).ready( function(){
-    $('canvas').each(function(){
+async function main() {
+	const chartCanvases = document.querySelectorAll('.js-rrd-chart');
 
-        $.post('/list/rrd/ajax.php',{service:$(this).attr('id'),period:$(this).attr('period')}, function(response){
-            labels=[];
-            //data is stored as start, end time and step between each step
-            for(i = response.meta.start; i < response.meta.end; i=i + response.meta.step){
-                labels.push(new Date(i * 1000).toLocaleString());
-            }
-            datasets = [];
-            //response.data stores data as i[x,y] useless for chartjs split in separate datasets
-            for(i = 0; i < response.meta.legend.length; i++){
-                data=[];
-                for( b of response.data){
-                    data.push(b[i]);
-                }
-                dataset={label: response.meta.legend[i], data: data, borderColor: colors[i]};
-                datasets.push(dataset);
-            }
-            //draw chart
-            const ctx = document.getElementById(response.service).getContext('2d');
-            const myChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: datasets
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        },'json');
-    });
-})
+	for (const chartCanvas of chartCanvases) {
+		const service = chartCanvas.getAttribute('data-service');
+		const period = chartCanvas.getAttribute('data-period');
+		const rrdData = await fetchRrdData(service, period);
+		const chartData = prepareChartData(rrdData, period);
+		const chartOptions = getChartOptions(rrdData.unit);
+
+		new Chart(chartCanvas, {
+			type: 'line',
+			data: chartData,
+			options: chartOptions,
+		});
+	}
+}
+
+async function fetchRrdData(service, period) {
+	const response = await fetch('/list/rrd/ajax.php', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ service, period }),
+	});
+
+	return response.json();
+}
+
+function prepareChartData(rrdData, period) {
+	const totalDatasets = rrdData.meta.legend.length;
+
+	return {
+		labels: rrdData.data.map((_, index) => {
+			const timestamp = rrdData.meta.start + index * rrdData.meta.step;
+			const date = new Date(timestamp * 1000);
+			return formatLabel(date, period);
+		}),
+		datasets: rrdData.meta.legend.map((legend, legendIndex) => {
+			const lineColor = getCssVariable(`--chart-line-${legendIndex + 1}-color`);
+
+			return {
+				label: legend,
+				data: rrdData.data.map((dataPoint) => dataPoint[legendIndex]),
+				tension: 0.3,
+				pointStyle: false,
+				fill: legendIndex === 0 && totalDatasets > 1,
+				borderWidth: 2,
+				borderColor: lineColor,
+				backgroundColor: lineColor,
+			};
+		}),
+	};
+}
+
+function formatLabel(date, period) {
+	const options = {
+		daily: { hour: '2-digit', minute: '2-digit' },
+		weekly: { weekday: 'short', day: 'numeric' },
+		monthly: { month: 'short', day: 'numeric' },
+		yearly: { month: 'long' },
+	};
+
+	return date.toLocaleString([], options[period]);
+}
+
+function getChartOptions(unit) {
+	const labelColor = getCssVariable('--chart-label-color');
+	const gridColor = getCssVariable('--chart-grid-color');
+
+	return {
+		plugins: {
+			legend: {
+				position: 'bottom',
+				labels: {
+					color: labelColor,
+				},
+			},
+		},
+		scales: {
+			x: {
+				ticks: {
+					color: labelColor,
+				},
+				grid: {
+					color: gridColor,
+				},
+			},
+			y: {
+				title: {
+					display: !!unit,
+					text: unit,
+					color: labelColor,
+				},
+				ticks: {
+					color: labelColor,
+				},
+				grid: {
+					color: gridColor,
+				},
+			},
+		},
+	};
+}
+
+function getCssVariable(variableName) {
+	return getComputedStyle(document.documentElement).getPropertyValue(variableName).trim();
+}

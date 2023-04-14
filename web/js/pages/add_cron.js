@@ -1,15 +1,49 @@
-$(document).ready(function(){
-    $('#tabs').tabs();
-    $('.context-helper').click(function(){ $('#tabs').toggle(); $('.context-helper').toggle(); });
-    $('.context-helper-close').click(function(){ $('#tabs').toggle(); $('.context-helper').toggle(); });
+const tabs = document.querySelector('.js-tabs');
+if (tabs) {
+	const tabItems = tabs.querySelectorAll('.tabs-item');
+	const panels = tabs.querySelectorAll('.tabs-panel');
+	tabItems.forEach((tab) => {
+		tab.addEventListener('click', (event) => {
+			// Reset state
+			panels.forEach((panel) => (panel.hidden = true));
+			tabItems.forEach((tab) => {
+				tab.setAttribute('aria-selected', false);
+				tab.setAttribute('tabindex', -1);
+			});
 
-    $('.helper-container form').submit(function(){
-        $('#vstobjects input[name=v_min]').val($(this).find(':input[name=h_min]').val()).effect('highlight');
-        $('#vstobjects input[name=v_hour]').val($(this).find(':input[name=h_hour]').val()).effect('highlight');
-        $('#vstobjects input[name=v_day]').val($(this).find(':input[name=h_day]').val()).effect('highlight');
-        $('#vstobjects input[name=v_month]').val($(this).find(':input[name=h_month]').val()).effect('highlight');
-        $('#vstobjects input[name=v_wday]').val($(this).find(':input[name=h_wday]').val()).effect('highlight');
+			// Show the selected panel
+			const tabId = event.target.getAttribute('id');
+			const panel = document.querySelector(`[aria-labelledby="${tabId}"]`);
+			panel.hidden = false;
 
-        return false;
-    });
-})
+			// Mark the selected tab as active
+			event.target.setAttribute('aria-selected', true);
+			event.target.setAttribute('tabindex', 0);
+			event.target.focus();
+		});
+	});
+}
+
+const generateCronButtons = document.querySelectorAll('.js-generate-cron');
+generateCronButtons.forEach((button) => {
+	button.addEventListener('click', () => {
+		const fieldset = button.closest('fieldset');
+		const inputNames = ['min', 'hour', 'day', 'month', 'wday'];
+
+		inputNames.forEach((inputName) => {
+			const value = fieldset.querySelector(`[name=h_${inputName}]`).value;
+			const formInput = document.querySelector(`#vstobjects input[name=v_${inputName}]`);
+
+			formInput.value = value;
+			formInput.classList.add('highlighted');
+
+			formInput.addEventListener(
+				'transitionend',
+				() => {
+					formInput.classList.remove('highlighted');
+				},
+				{ once: true }
+			);
+		});
+	});
+});

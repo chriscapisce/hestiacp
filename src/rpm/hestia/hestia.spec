@@ -1,6 +1,8 @@
+%global _hardened_build 1
+
 Name:           hestia
-Version:        %HESTIA-VERSION%
-Release:        1%{dist}
+Version:        1.7.3
+Release:        1~alpha%{dist}
 Summary:        Hestia Control Panel
 Group:          System Environment/Base
 License:        GPLv3
@@ -110,6 +112,9 @@ if [ -e "/usr/local/hestia/data/users/admin" ]; then
 
     # Upgrade phpMyAdmin if applicable
     upgrade_phpmyadmin | tee -a $LOG
+
+	# Upgrade phpMyAdmin if applicable
+	upgrade_phppgadmin | tee -a $LOG
 
     # Upgrade blackblaze-cli-took if applicable
     upgrade_b2_tool | tee -a $LOG

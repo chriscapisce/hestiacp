@@ -1,5 +1,7 @@
+%global _hardened_build 1
+
 Name:           hestia-php
-Version:        %HESTIA-PHP-VERSION%
+Version:        8.2.4
 Release:        1%{dist}
 Summary:        Hestia internal PHP
 Group:          System Environment/Base
