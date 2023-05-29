@@ -217,10 +217,10 @@ strong {
 
 .toolbar-sorting-toggle {
 	&:hover {
-		color: #bcbcbc;
+		color: #aaa;
 
-		& b {
-			color: #bcbcbc;
+		& span {
+			color: #aaa;
 		}
 	}
 }
@@ -351,7 +351,7 @@ strong {
 	color: #fff;
 }
 
-.table-header {
+.units-header {
 	background: #404040;
 	border-left: 1px solid #212121;
 	border-right: 1px solid #212121;
@@ -387,7 +387,7 @@ strong {
 	border-left: 2px solid #ff3478;
 }
 
-.units.active .l-unit.focus {
+.units .l-unit.focus {
 	background-color: #353535;
 }
 
@@ -418,38 +418,18 @@ strong {
 	color: #fff !important;
 }
 
-.l-unit--suspended .l-unit__name,
 .l-unit--suspended b,
-.l-unit--outdated .l-unit__name,
 .l-unit--outdated b {
 	color: #606060;
-}
-
-.l-unit--outdated .l-unit__name {
 }
 
 .l-unit--outdated b {
 	color: #d4d4d4;
 }
 
-.l-unit--suspended .l-percent {
-}
-
-.l-unit--suspended .l-percent__fill {
-}
-
-.l-unit--suspended.selected .l-unit__name,
-.l-unit--suspended.selected .l-unit__name span {
-	color: #707070;
-}
-
 .l-unit--suspended.selected {
 	background-color: #454545 !important;
 	color: #707070 !important;
-}
-
-.l-unit__name {
-	color: #dadada;
 }
 
 .l-unit__stat-col--left {
@@ -461,6 +441,113 @@ strong {
 	& a:hover {
 		color: #fff;
 	}
+}
+
+/* Units table
+   ========================================================================== */
+
+.units-table-header {
+	@media (--viewport-large) {
+		background: #404040;
+		box-shadow: none;
+		text-shadow: 0 1px rgb(0 0 0 / 95%);
+		border-color: #212121;
+	}
+}
+
+.units-table-row {
+	border-color: #282828;
+	background-color: #303030;
+
+	&.selected {
+		background-color: #454545;
+		box-shadow: none;
+	}
+
+	&.disabled {
+		color: #606060;
+		background-color: #252525;
+
+		&.selected {
+			color: #333;
+			background-color: #454545;
+		}
+	}
+
+	&.focus {
+		background-color: #353535;
+	}
+
+	@media (--viewport-large) {
+		&:hover {
+			background-color: #353535;
+			border-color: #282828;
+			box-shadow: none;
+		}
+
+		&.selected {
+			border-left-color: #212121;
+			border-right-color: #212121;
+
+			&:hover {
+				background-color: #555;
+			}
+		}
+
+		&.disabled {
+			&:hover {
+				background-color: #252525;
+			}
+
+			&.selected:hover {
+				color: #333;
+				background-color: #454545;
+			}
+		}
+	}
+}
+
+.units-table-cell {
+	& a {
+		color: #fafafa;
+
+		&:hover {
+			color: #fafafa;
+		}
+	}
+}
+
+.units-table-row-action-link {
+	border-color: #454545;
+	background-color: #282828;
+
+	@media (--viewport-large) {
+		background-color: transparent;
+	}
+}
+
+/* Statistics
+   ========================================================================== */
+
+.stats-item {
+	border-bottom-color: #404040;
+
+	@media (--viewport-large) {
+		&:hover {
+			background-color: #353535;
+			border-left-color: #353535;
+			border-right-color: #353535;
+			box-shadow: 0 2px 10px rgb(0 0 0 / 20%);
+		}
+	}
+}
+
+.stats-item-header-title {
+	color: #eee;
+}
+
+.stats-item-summary-title {
+	border-bottom-color: #585858;
 }
 
 /* Forms
@@ -731,8 +818,10 @@ strong {
 /* Spinner
    ========================================================================== */
 
-.fullscreen-loader {
-	background-color: rgb(0 0 0 / 50%);
+.spinner-overlay {
+	& .fas {
+		box-shadow: 0 8px 25px rgb(0 0 0 / 90%);
+	}
 }
 
 /* Badge component
@@ -794,13 +883,13 @@ strong {
 	border-top: 1px solid #404040;
 }
 
-/* Shortcuts panel
+/* Shortcuts modal
    ========================================================================== */
 
 .shortcuts {
-	background: rgb(30 30 30 / 95%);
-	border: 1px solid rgb(255 255 255 / 25%);
-	box-shadow: 0 0 20px rgb(0 0 0 / 50%);
+	background-color: #2c2c2c;
+	border-color: #404040;
+	box-shadow: 0 8px 25px rgb(0 0 0 / 90%);
 }
 
 .shortcuts-header {
@@ -830,20 +919,7 @@ strong {
 }
 
 .server-console-output {
-	background: #282828;
-}
-
-.l-percent {
-	border-bottom: 2px solid #585858 !important;
-}
-
-.body-stats .l-unit__name {
-	color: #eee !important;
-}
-
-.statistics-count {
-	border-bottom: 1px dotted #707070;
-	border-right: 1px dotted #707070;
+	background-color: #282828;
 }
 
 .body-stats .units .l-unit {

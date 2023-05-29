@@ -1184,7 +1184,7 @@ if (!empty($_POST["save"])) {
 	if (empty($_SESSION["error_msg"])) {
 		if ($_POST["v_inactive_session_timeout"] != $_SESSION["INACTIVE_SESSION_TIMEOUT"]) {
 			if ($_POST["v_inactive_session_timeout"] < 1) {
-				$_SESSION["error_msg"] = _("Inactive session timeout can not lower than 1 minute");
+				$_SESSION["error_msg"] = _("Inactive session timeout can not lower than 1 minute.");
 			} else {
 				exec(
 					HESTIA_CMD .
@@ -1560,6 +1560,41 @@ if (!empty($_POST["save"])) {
 			unset($output);
 			if (empty($_SESSION["error_msg"])) {
 				$v_policy_system_hide_services = $_POST["v_policy_system_hide_services"];
+			}
+			$v_security_adv = "yes";
+		}
+	}
+
+	if (empty($_SESSION["error_msg"])) {
+		if ($_POST["v_policy_sync_error_documents"] != $_SESSION["POLICY_SYNC_ERROR_DOCUMENTS"]) {
+			exec(
+				HESTIA_CMD .
+					"v-change-sys-config-value POLICY_SYNC_ERROR_DOCUMENTS " .
+					quoteshellarg($_POST["v_policy_sync_error_documents"]),
+				$output,
+				$return_var,
+			);
+			check_return_code($return_var, $output);
+			unset($output);
+			if (empty($_SESSION["error_msg"])) {
+				$v_policy_system_hide_services = $_POST["v_policy_sync_error_documents"];
+			}
+			$v_security_adv = "yes";
+		}
+	}
+	if (empty($_SESSION["error_msg"])) {
+		if ($_POST["v_policy_sync_skeleton"] != $_SESSION["POLICY_SYNC_SKELETON"]) {
+			exec(
+				HESTIA_CMD .
+					"v-change-sys-config-value POLICY_SYNC_SKELETON " .
+					quoteshellarg($_POST["v_policy_sync_skeleton"]),
+				$output,
+				$return_var,
+			);
+			check_return_code($return_var, $output);
+			unset($output);
+			if (empty($_SESSION["error_msg"])) {
+				$v_policy_system_hide_services = $_POST["v_policy_sync_skeleton"];
 			}
 			$v_security_adv = "yes";
 		}
