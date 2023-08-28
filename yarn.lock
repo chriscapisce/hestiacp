@@ -1443,12 +1443,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"alpinejs@npm:^3.12.1":
-  version: 3.12.1
-  resolution: "alpinejs@npm:3.12.1"
+"alpinejs@npm:^3.13.0":
+  version: 3.13.0
+  resolution: "alpinejs@npm:3.13.0"
   dependencies:
     "@vue/reactivity": ~3.1.1
-  checksum: af1250a83c9bc6161c16b09026521f994625d2e6a944bbde8ed87d75f07014beb7e2d9ca32f7ff87fc68ae13c39dcbac6fe930669b835922510ca037627606aa
+  checksum: f28e69b5783670927703b035735b83767f328ee77749f4fdfa2d533d1857ebe2323d46a143db76878a21155e7804535336da90c36a68ca7e106f9905aa9cc0d8
   languageName: node
   linkType: hard
 
@@ -3313,7 +3313,7 @@ __metadata:
     "@prettier/plugin-php": ^0.19.5
     "@typescript-eslint/eslint-plugin": ^5.59.7
     "@typescript-eslint/parser": ^5.59.7
-    alpinejs: ^3.12.1
+    alpinejs: ^3.13.0
     chart.js: ^4.3.0
     check-password-strength: ^2.0.7
     cssnano: ^6.0.1
