@@ -6,10 +6,10 @@ use Hestia\WebApp\Installers\BaseSetup as BaseSetup;
 
 class PrestashopSetup extends BaseSetup {
 	protected $appInfo = [
-		"name" => "Prestashop",
+		"name" => "PrestaShop",
 		"group" => "ecommerce",
 		"enabled" => true,
-		"version" => "8.0.4",
+		"version" => "8.1.0",
 		"thumbnail" => "prestashop-thumb.png",
 	];
 
@@ -27,7 +27,7 @@ class PrestashopSetup extends BaseSetup {
 		"resources" => [
 			"archive" => [
 				"src" =>
-					"https://github.com/PrestaShop/PrestaShop/releases/download/8.0.4/prestashop_8.0.4.zip",
+					"https://github.com/PrestaShop/PrestaShop/releases/download/8.1.0/prestashop_8.1.0.zip",
 			],
 		],
 		"server" => [

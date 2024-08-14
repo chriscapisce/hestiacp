@@ -13,12 +13,12 @@ Hestia must be installed on top of a fresh operating system installation to ensu
 If on a VPS/KVM, and there is already an admin account, either delete that default admin ID, or use `--force` to continue with the installation. See custom installation below for further details.
 :::
 
-|                      | Minimum                                   | Recommended                          |
-| -------------------- | ----------------------------------------- | ------------------------------------ |
-| **CPU**              | 1 core, 64-bit                            | 4 cores                              |
-| **Memory**           | 1 GB (no SpamAssassin and ClamAV)         | 4 GB                                 |
-| **Disk**             | 10 GB HDD                                 | 40 GB SSD                            |
-| **Operating System** | Debian 10, 11 <br>Ubuntu 20.04, 22.04 LTS | Latest Debian <br> Latest Ubuntu LTS |
+|                      | Minimum                                        | Recommended                          |
+| -------------------- | ---------------------------------------------- | ------------------------------------ |
+| **CPU**              | 1 core, 64-bit                                 | 4 cores                              |
+| **Memory**           | 1 GB (no SpamAssassin and ClamAV)              | 4 GB                                 |
+| **Disk**             | 10 GB HDD                                      | 40 GB SSD                            |
+| **Operating System** | Debian 10, 11 or 12<br>Ubuntu 20.04, 22.04 LTS | Latest Debian <br> Latest Ubuntu LTS |
 
 ::: warning
 Hestia only runs on AMD64 / x86_64 and ARM64 / aarch64 processors. It also requires a 64bit operating system!
@@ -27,7 +27,7 @@ We currently do not support i386 or ARM7-based processors.
 
 ### Supported operating systems
 
-- Debian 10 or 11
+- Debian 10, 11 or 12
 - Ubuntu 20.04 or 22.04
 
 ::: warning
@@ -75,7 +75,7 @@ bash hst-install.sh -h
 ### List of installation options
 
 ::: tip
-An easier way to choose your installation options is by using the [Install string generator](/install.md).
+An easier way to choose your installation options is by using the [Install script generator](/install).
 :::
 
 To choose what software gets installed, you can provide flags to the installation script. You can view the full list of options below.
@@ -83,27 +83,29 @@ To choose what software gets installed, you can provide flags to the installatio
 ```bash
 -a, --apache Install Apache [yes | no] default: yes
 -w, --phpfpm Install PHP-FPM [yes | no] default: yes
--o, --multiphp Install Multi-PHP [yes | no] default: no
--v, --vsftpd Install Vsftpd [yes | no] default: yes
+-o, --multiphp Install MultiPHP [yes | no] default: no
+-v, --vsftpd Install VSFTPD [yes | no] default: yes
 -j, --proftpd Install ProFTPD [yes | no] default: no
--k, --named Install Bind [yes | no] default: yes
+-k, --named Install BIND [yes | no] default: yes
 -m, --mysql Install MariaDB [yes | no] default: yes
--M, --mysql-classic Install Mysql8 [yes | no] default: no
+-M, --mysql8 Install MySQL 8 [yes | no] default: no
 -g, --postgresql Install PostgreSQL [yes | no] default: no
 -x, --exim Install Exim [yes | no] default: yes
 -z, --dovecot Install Dovecot [yes | no] default: yes
 -Z, --sieve Install Sieve [yes | no] default: no
 -c, --clamav Install ClamAV [yes | no] default: yes
 -t, --spamassassin Install SpamAssassin [yes | no] default: yes
--i, --iptables Install Iptables [yes | no] default: yes
--b, --fail2ban Install Fail2ban [yes | no] default: yes
+-i, --iptables Install iptables [yes | no] default: yes
+-b, --fail2ban Install Fail2Ban [yes | no] default: yes
 -q, --quota Filesystem Quota [yes | no] default: no
+-W, --webterminal Web Terminal [yes | no] default: no
 -d, --api Activate API [yes | no] default: yes
 -r, --port Change Backend Port default: 8083
 -l, --lang Default language default: en
 -y, --interactive Interactive install [yes | no] default: yes
 -s, --hostname Set hostname
 -e, --email Set admin email
+-u, --username Set admin user
 -p, --password Set admin password
 -D, --with-debs Path to Hestia debs
 -f, --force Force installation

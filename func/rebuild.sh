@@ -62,6 +62,9 @@ rebuild_user_conf() {
 	if [ -z "${RATE_LIMIT+x}" ]; then
 		sed -i "/MAIL_ACCOUNTS/a RATE_LIMIT='200'" $USER_DATA/user.conf
 	fi
+	if [ -z "${SHELL_JAIL_ENABLED+x}" ]; then
+		sed -i "/SHELL/a SHELL_JAIL_ENABLED='no'" $USER_DATA/user.conf
+	fi
 	# Run template trigger
 	if [ -x "$HESTIA/data/packages/$PACKAGE.sh" ]; then
 		$HESTIA/data/packages/$PACKAGE.sh "$user" "$CONTACT" "$NAME"
@@ -78,8 +81,8 @@ rebuild_user_conf() {
 	fi
 
 	# Add membership to hestia-users group to non-admin users
-	if [ "$user" = "admin" ]; then
-		setfacl -m "g:admin:r-x" "$HOMEDIR/$user"
+	if [ "$user" = "$ROOT_USER" ]; then
+		setfacl -m "g:$ROOT_USER:r-x" "$HOMEDIR/$user"
 	else
 		usermod -a -G "hestia-users" "$user"
 		setfacl -m "u:$user:r-x" "$HOMEDIR/$user"
@@ -108,7 +111,8 @@ rebuild_user_conf() {
 		$HOMEDIR/$user/.composer \
 		$HOMEDIR/$user/.vscode-server \
 		$HOMEDIR/$user/.ssh \
-		$HOMEDIR/$user/.npm
+		$HOMEDIR/$user/.npm \
+		$HOMEDIR/$user/.wp-cli
 	chmod a+x $HOMEDIR/$user
 	chmod a+x $HOMEDIR/$user/conf
 	chown --no-dereference $user:$user \
@@ -119,10 +123,15 @@ rebuild_user_conf() {
 		$HOMEDIR/$user/.composer \
 		$HOMEDIR/$user/.vscode-server \
 		$HOMEDIR/$user/.ssh \
-		$HOMEDIR/$user/.npm
+		$HOMEDIR/$user/.npm \
+		$HOMEDIR/$user/.wp-cli
 	chown root:root $HOMEDIR/$user/conf
 
 	$BIN/v-add-user-sftp-jail "$user"
+	# Check if SHELL_JAIL_ENABLED
+	if [ "$SHELL_JAIL_ENABLED" == "yes" ]; then
+		$BIN/v-add-user-ssh-jail "$user"
+	fi
 
 	# Update disk pipe
 	sed -i "/ $user$/d" $HESTIA/data/queue/disk.pipe
@@ -261,9 +270,7 @@ rebuild_web_domain_conf() {
 	if [ ! -d "$HOMEDIR/$user/web/$domain/document_errors" ]; then
 		$BIN/v-add-fs-directory "$user" "$HOMEDIR/$user/web/$domain/document_errors"
 		# Propagating html skeleton
-		if [ -d "$WEBTPL/skel/document_errors/" ]; then
-			user_exec cp -r "$WEBTPL/skel/document_errors/" "$HOMEDIR/$user/web/$domain/"
-		fi
+		user_exec cp -r "$WEBTPL/skel/document_errors/" "$HOMEDIR/$user/web/$domain/"
 	fi
 	$BIN/v-add-fs-directory "$user" "$HOMEDIR/$user/web/$domain/cgi-bin"
 	$BIN/v-add-fs-directory "$user" "$HOMEDIR/$user/web/$domain/private"
@@ -461,8 +468,12 @@ rebuild_web_domain_conf() {
 		chgrp $user $htpasswd $htaccess
 	done
 
+	# domain folder permissions: DOMAINDIR_WRITABLE: default-val:no source:hestia.conf
+	DOMAINDIR_MODE=551
+	if [ "$DOMAINDIR_WRITABLE" = 'yes' ]; then DOMAINDIR_MODE=751; fi
+
 	# Set folder permissions
-	no_symlink_chmod 551 $HOMEDIR/$user/web/$domain \
+	no_symlink_chmod 751 $HOMEDIR/$user/web/$domain \
 		$HOMEDIR/$user/web/$domain/stats \
 		$HOMEDIR/$user/web/$domain/logs
 	no_symlink_chmod 751 $HOMEDIR/$user/web/$domain/private \
@@ -626,7 +637,7 @@ rebuild_mail_domain_conf() {
 		touch $HOMEDIR/$user/conf/mail/$domain/limits
 
 		# Setting outgoing ip address
-		if [ -n "$local_ip" ]; then
+		if [ -n "$local_ip" ] && [ "$U_SMTP_RELAY" != 'true' ]; then
 			echo "$local_ip" > $HOMEDIR/$user/conf/mail/$domain/ip
 		fi
 

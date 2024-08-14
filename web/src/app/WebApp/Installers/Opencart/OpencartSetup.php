@@ -6,10 +6,10 @@ use Hestia\WebApp\Installers\BaseSetup as BaseSetup;
 
 class OpencartSetup extends BaseSetup {
 	protected $appInfo = [
-		"name" => "Opencart",
+		"name" => "OpenCart",
 		"group" => "ecommerce",
 		"enabled" => true,
-		"version" => "4.0.2.1",
+		"version" => "4.0.2.2",
 		"thumbnail" => "opencart-thumb.png",
 	];
 
@@ -26,7 +26,7 @@ class OpencartSetup extends BaseSetup {
 		"resources" => [
 			"archive" => [
 				"src" =>
-					"https://github.com/opencart/opencart/releases/download/4.0.2.1/opencart-4.0.2.1.zip",
+					"https://github.com/opencart/opencart/releases/download/4.0.2.2/opencart-4.0.2.2.zip",
 			],
 		],
 		"server" => [

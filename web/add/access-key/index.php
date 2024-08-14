@@ -11,7 +11,10 @@ $api_status =
 	!empty($_SESSION["API_SYSTEM"]) && is_numeric($_SESSION["API_SYSTEM"])
 		? $_SESSION["API_SYSTEM"]
 		: 0;
-if (($user_plain == "admin" && $api_status < 1) || ($user_plain != "admin" && $api_status < 2)) {
+if (
+	($user_plain == $_SESSION["ROOT_USER"] && $api_status < 1) ||
+	($_SESSION["ROOT_USER"] != "admin" && $api_status < 2)
+) {
 	header("Location: /edit/user/");
 	exit();
 }
@@ -79,8 +82,8 @@ if (!empty($_POST["ok"])) {
 				_("Access key {%s} has been created successfully."),
 				htmlentities($key_data["ACCESS_KEY_ID"]),
 			),
-			"</b>",
-			"<b>",
+			"</code>",
+			"<code>",
 		);
 		unset($apis_selected);
 		unset($check_invalid_apis);

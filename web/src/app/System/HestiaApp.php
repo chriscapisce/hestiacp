@@ -147,7 +147,7 @@ class HestiaApp {
 		if (!is_file($wp)) {
 			$this->runUser("v-add-user-wp-cli", []);
 		} else {
-			$this->runUser("v-run-cli-cmd", [$wp, "cli", "update"]);
+			$this->runUser("v-run-cli-cmd", [$wp, "cli", "update", "--yes"]);
 		}
 		array_unshift($args, $wp);
 
@@ -349,5 +349,18 @@ class HestiaApp {
 		unlink($archive_file);
 
 		return $result;
+	}
+
+	public function cleanupTmpDir(): void {
+		$files = glob(self::TMPDIR_DOWNLOADS . "/*");
+		foreach ($files as $file) {
+			if (is_file($file)) {
+				unlink($file);
+			}
+		}
+	}
+
+	public function __destruct() {
+		$this->cleanupTmpDir();
 	}
 }

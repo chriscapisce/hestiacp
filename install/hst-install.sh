@@ -8,9 +8,8 @@
 #
 # Currently Supported Operating Systems:
 #
-# Debian 10, 11
-# Ubuntu 20.04, 22.04
-# AlmaLinux, EuroLinux, Red Hat EnterPrise Linux, Rocky Linux 8, 9
+# Debian 10, 11, 12
+# Ubuntu 20.04, 22.04, 24.04 LTS
 #
 # ======================================================== #
 
@@ -81,8 +80,8 @@ no_support_message() {
 	echo "Your operating system (OS) is not supported by"
 	echo "Hestia Control Panel. Officially supported releases:"
 	echo "****************************************************"
-	echo "  Debian 10, 11"
-	echo "  Ubuntu 20.04, 22.04 LTS"
+	echo "  Debian 10, 11, 12"
+	echo "  Ubuntu 20.04, 22.04, 24.04 LTS"
 	# Commenting this out for now
 	# echo "  AlmaLinux, EuroLinux, Red Hat EnterPrise Linux, Rocky Linux 8,9"
 	echo ""
@@ -143,7 +142,7 @@ check_wget_curl() {
 
 # Check for supported operating system before proceeding with download
 # of OS-specific installer, and throw error message if unsupported OS detected.
-if [[ "$release" =~ ^(10|11|20.04|22.04)$ ]]; then
+if [[ "$release" =~ ^(10|11|12|20.04|22.04|24.04)$ ]]; then
 	check_wget_curl $*
 elif [[ -e "/etc/redhat-release" ]] && [[ "$release" =~ ^(8|9)$ ]]; then
 	check_wget_curl $*
